@@ -1,4 +1,4 @@
-# push-stream--
+# push-stream
 
 This is a reimagining of what a push-style stream could be.
 
@@ -13,6 +13,9 @@ but without several of the unrealized-at-the-time blunders of classic streams.
 * call a `resume` method on the source stream (that stays the same) instead of assigning and reassigned "drain" listeners.
   the only property that changes while streaming is the `paused` boolean. No closures are necessary (which are related to memory leaks and not optimized by js engines)
   possibly a stream has a buffer (array) but otherwise no memory should be allocated on most simple streams.
+
+for additional context learn about the [history of node streams](http://dominictarr.com/post/145135293917/history-of-streams)
+and the [simplicity of pull-streams](http://dominictarr.com/post/149248845122/pull-streams-pull-streams-are-a-very-simple)
 
 ## motivation
 
