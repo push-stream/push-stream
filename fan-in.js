@@ -1,4 +1,3 @@
-
 module.exports = FanOutput
 
 function FanOutput () {
@@ -10,8 +9,8 @@ function FanOutput () {
 
 //this should _only_ be called by the FanInputs
 FanOutput.prototype.write = function (data) {
-  if(!this.dest.paused && !this.buffer.length)
-    this.dest.write(data)
+  if(!this.sink.paused && !this.buffer.length)
+    this.sink.write(data)
   else
     this.buffer.push(data)
 }
@@ -19,9 +18,9 @@ FanOutput.prototype.write = function (data) {
 
 FanOutput.prototype.resume = function () {
   this.paused = false
-  while(!this.dest.paused && this.buffer.length)
-    this.dest.write(this.buffer.shift())
-  if(!this.dest.paused) {
+  while(!this.sink.paused && this.buffer.length)
+    this.sink.write(this.buffer.shift())
+  if(!this.sink.paused) {
     for(var k in this.inputs)
       if(this.inputs[k].paused)
         this.inputs[k].resume()
@@ -34,11 +33,7 @@ FanOutput.prototype.createInput = function () {
   return input
 }
 
-FanOutput.prototype.pipe = function (dest) {
-  this.dest = dest
-  dest.source = this
-  if(!dest.paused) this.resume()
-}
+FanOutput.prototype.pipe = require('./pipe')
 
 function FanInput (output, id) {
   this.output = output
@@ -63,4 +58,5 @@ FanInput.prototype.end = function (err) {
   this.ended = err || true
   delete this.output[this.id]
 }
+
 

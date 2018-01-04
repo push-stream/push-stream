@@ -1,15 +1,13 @@
 
-function DuplexStream () {
-  this.paused = false
-  this.buffer = []
+
+module.exports = Duplex
+
+function Duplex (source, sink) {
+  this.source = source
+  this.sink = sink
 }
 
-DuplexStream.prototype.queue = function (data) {
-  if(!this.dest.paused)
-    this.dest.write(data)
-  else
-    this.buffer.push(data)
+Duplex.prototype.pipe = function (sink) {
+  return this.source.pipe(sink)
 }
-
-
 

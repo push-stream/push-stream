@@ -1,20 +1,20 @@
 
 function PushStream () {
   this.ended = this.paused = false
-  this.source = this.dest = null
+  this.source = this.sink = null
 }
 
 PushStream.prototype.write = function (data) {
-  if(this.dest) {
-    this.dest.write(data)
-    if(!this.dest.paused)
+  if(this.sink) {
+    this.sink.write(data)
+    if(!this.sink.paused)
       this.source.resume()
   }
 }
 
 PushStream.prototype.end = function (err) {
   this.ended = err || true
-  if(this.dest) this.dest.end(this.ended)
+  if(this.sink) this.sink.end(this.ended)
 }
 
 PushStream.prototype.abort = function (err) {
@@ -27,11 +27,5 @@ PushStream.prototype.resume = function () {
   if(this.source.paused) this.source.resume()
 }
 
-PushStream.prototype.pipe = function (dest) {
-  this.dest = dest; dest.source = this
-  if(!this.dest.paused && this.paused)
-    this.resume()
-  else
-    this.paused = true
-}
+PushStream.prototype.pipe = require('./pipe')
 

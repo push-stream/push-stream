@@ -1,4 +1,3 @@
-
 module.exports = SpreadStream
 
 function SpreadStream () {
@@ -38,7 +37,7 @@ SubStream.prototype.write = function (data) {
   if(this.paused)
     this.buffer.push(data)
   else
-    this.dest.write(data)
+    this.sink.write(data)
 
   if(!this.paused && this.dest.paused)
     this.input.countPaused ++
@@ -53,14 +52,14 @@ SubStream.prototype.end = function (err) {
 
 SubStream.prototype.resume = function () {
   if(this.paused) {
-    while(!this.dest.paused && this.buffer.length)
-      this.dest.write(this.buffer.shift())
-    if(this.dest.paused) {
+    while(!this.sink.paused && this.buffer.length)
+      this.sink.write(this.buffer.shift())
+    if(this.sink.paused) {
       this.paused = true
       this.input.countPaused ++
     }
     else {
-      if(this.ended) this.dest.end(this.ended === true ? null : this.ended)
+      if(this.ended) this.sink.end(this.ended === true ? null : this.ended)
       this.paused = false
       if(!--this.input.countPaused)
         this.input.resume()
@@ -68,3 +67,4 @@ SubStream.prototype.resume = function () {
   }
 }
 
+SubStream.prototype.pipe = require('./pipe')
