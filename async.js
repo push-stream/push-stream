@@ -4,6 +4,8 @@ function AsyncStream (fn) {
   this._fn = fn
   this.buffer = []
   this.paused = true
+  this.source = null
+  this.dest = null
 }
 
 AsyncStream.prototype.write = function (data) {

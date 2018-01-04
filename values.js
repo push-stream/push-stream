@@ -6,7 +6,6 @@ function ValueStream (values) {
   this._values = values
   this.paused = true
   this.dest = null //no source, because this is the source.
-
 }
 
 ValueStream.prototype.resume = function () {

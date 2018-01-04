@@ -9,6 +9,8 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "fastbench": "^1.0.1",
+    "pull-stream": "^3.6.1",
     "tape": "^4.8.0"
   },
   "scripts": {

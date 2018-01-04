@@ -1,7 +1,7 @@
 
-module.exports = FanInOutput
+module.exports = FanOutput
 
-function FanInOutput () {
+function FanOutput () {
   this.paused = true
   this.buffer = []
   this.ended = false
@@ -29,19 +29,27 @@ FanOutput.prototype.resume = function () {
 }
 
 FanOutput.prototype.createInput = function () {
-  var fi = new FanInput(this)
-  this.inputs.push(fi)
+  var input = new FanInput(this, this.inputs.length)
+  this.inputs.push(input)
+  return input
+}
+
+FanOutput.prototype.pipe = function (dest) {
+  this.dest = dest
+  dest.source = this
+  if(!dest.paused) this.resume()
 }
 
 function FanInput (output, id) {
   this.output = output
   this.id = id
-  this.paused = false
+  this.paused = this.output.paused
 }
 
 FanInput.prototype.resume = function () {
   this.paused = false
-  this.source.resume()
+  if(this.source)
+    this.source.resume()
 }
 
 FanInput.prototype.write = function (data) {
