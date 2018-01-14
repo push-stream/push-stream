@@ -23,13 +23,14 @@ AsyncStream.prototype.pipe = require('./pipe')
 AsyncStream.prototype.resume = function () {
   this.paused = false
   if(this.ended) this.sink.end(this.ended === true ? null : this.ended)
-  else this.source.resume()
+  else if (this.source) this.source.resume()
 }
 
 AsyncStream.prototype.end = function (err) {
   this.ended = err || true
   if(!this.paused) this.sink.end(this.ended)
 }
+
 
 
 
