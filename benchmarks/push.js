@@ -14,47 +14,50 @@ const values = [
 
 const run = bench([
   function pull3 (done) {
-//    a.push(
-    new Values(values).pipe(new Async(function (val, done) {
-      done(null, val)
-    })).pipe(new Collect(function (err, array) {
-      if (err) return console.error(err)
-      setImmediate(done)
-    }))//)
-  }
-//,
-//  function pull_compose (done) {
-//    const source = pull.values(values)
-//    const through = pull.asyncMap(function (val, done) {
-//      const json = JSON.parse(val)
-//      done(null, json)
-//    })
-//
-//    const sink = pull.collect(function (err, array) {
-//      if (err) return console.error(err)
-//      setImmediate(done)
-//    })
-//    pull(source, pull(through, sink))
-//  }
-////,
-//  function pull_chain (done) {
-//    const source = pull.values(values)
-//    const through = pull.asyncMap(function (val, done) {
-//      const json = JSON.parse(val)
-//      done(null, json)
-//    })
-//
-//    const sink = pull.collect(function (err, array) {
-//      if (err) return console.error(err)
-//      setImmediate(done)
-//    })
-//    pull(pull(source, through), sink)
-//  }
+    new Values(values)
+      .pipe(new Async(function (val, done) {
+        done(null, val)
+      }))
+      .pipe(new Collect(function (err, array) {
+        if (err) return console.error(err)
+        setImmediate(done)
+      }))
+  },
+  function compose (done) {
+    new Values(values)
+      .pipe(
+        new Async(function (val, done) { done(null, val)})
+        .pipe(new Collect(function (err, array) {
+          if (err) return console.error(err)
+          setImmediate(done)
+        }))
+      )
+  },
+  function pull_chain (done) {
+    //this means exactly same thing as pull3
+    //but pull_chain seemed like a different thing in pull-streams
+    var p = new Values(values)
+      .pipe(new Async(function (val, done) {
+        done(null, val)
+      }))
+
+    p.pipe(new Collect(function (err, array) {
+        if (err) return console.error(err)
+        setImmediate(done)
+      }))
+  },
 ], N=100000)
 
 var heap = process.memoryUsage().heapUsed
 run(function () {
   console.log((process.memoryUsage().heapUsed - heap)/N)
 })
+
+
+
+
+
+
+
 
 
