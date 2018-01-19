@@ -96,6 +96,127 @@ stream connects to.
 This is a subtle distinction and probably only advanced use cases
 require writing duplex streams (you are doing protocol design if you are writing a duplex stream)
 
+## how data flows through a push stream pipe
+
+in node.js streams, there is a complicated "pipe" method
+that defines how data flows between the streams. In `push-stream`
+the `pipe` method just connects the streams together, and
+instead of emitting events, the streams just call `write` and `end`
+on the next stream in the pipeline directly.
+
+## simplest push-streams examples
+
+### Source: read an array into a stream
+
+A push-stream source is a simple object with a
+`pipe` `resume` and `abort` method.
+
+A push-stream pipeline
+is just a doubly-linked list. the `sink` property is a reference
+to the next stream in the pipeline, and `source` is a reference
+to the previous stream. The words `Source` and `Sink` are also
+used to refer to the first and last streams in a pipeline.
+The `pipe` method just sets up these references, and the `resume`
+method starts the data flowing. The data should flow until
+the sink stream is not paused, as indicated by it setting the
+`pause` property to true.
+
+[pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L1-L21)
+
+``` js
+//a stream that reads an array
+function Values (ary) {
+  var i = 0
+  return {
+    resume: function () {
+      if(!this.sink || this.ended) return
+
+      while(!this.sink.paused && i < ary.length)
+        this.sink.write(ary[i++])
+
+      //note: end does not check pause state.
+      //pause does not block end.
+      if(i === ary.length) this.sink.end()
+    },
+    //pipe() can be as simple as connecting streams together!
+    pipe: function (sink) {
+      this.sink = sink
+      sink.source = this
+      this.resume()
+      return sink
+    },
+    //abort ends the stream immediately.
+    abort: function (err) {
+      this.ended = err
+      //if the stream has ended, abort immediately.
+      if(!this.sink.ended) this.sink.end(err)
+    }
+  }
+
+}
+```
+
+### sink: write a stream to console
+
+A sink stream has `write` and `end` methods and a `paused` property.
+in pull-streams, the sink is responsible for calling the source
+but in push-streams it's the reverse - so the push-stream sink
+doesn't need very much at all.
+
+[pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L23-L44)
+
+``` js
+return Log (name) {
+  return {
+    paused: false,
+    write: function (data) { 
+      console.log(data)
+      //if you set paused=true here, the source should stop writing.
+    },
+    end: function (err) {
+      this.ended = err || true
+    }
+  }
+}
+```
+
+### through: map a stream by a function
+
+the through stream is more complicated in push-streams because
+it needs to have the apis of both source and sink.
+This is a very simple example through stream that does not
+have it's own internal buffer. It just writes to the sink
+immediately. This may mean writing when the sink is paused in
+some situations, if this is a problem drop in a buffering stream
+
+``` js
+function Map(fn) {
+  return {
+    paused: true,
+    write: function (data) {
+      this.sink.write(data)
+      this.paused = this.sink.paused
+    },
+    end: function (err) {
+      this.ended = err || true
+      this.sink.end(err)
+    },
+    resume: function () {
+      this.source.resume()
+    },
+    pipe: function (sink) {
+      this.sink = sink
+      sink.source = this
+      this.resume()
+      return sink
+    },
+    abort: function (err) {
+      this.source.abort(err)
+    }
+  }
+}
+```
+
 
 ## License
 
