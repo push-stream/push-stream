@@ -189,6 +189,11 @@ have it's own internal buffer. It just writes to the sink
 immediately. This may mean writing when the sink is paused in
 some situations, if this is a problem drop in a buffering stream
 
+note, push-stream throughs must start out with `paused=true`,
+sinks start out `paused=false` if a through is piped to a destination
+that is unpaused, it should resume, which will propagate the resume
+signal back up the pipeline and data will start flowing.
+
 ``` js
 function Map(fn) {
   return {
@@ -207,7 +212,9 @@ function Map(fn) {
     pipe: function (sink) {
       this.sink = sink
       sink.source = this
-      this.resume()
+      this.paused = this.sink.paused
+      if(!this.sink.paused)
+        this.resume()
       return sink
     },
     abort: function (err) {
@@ -221,4 +228,6 @@ function Map(fn) {
 ## License
 
 MIT
+
+
 
