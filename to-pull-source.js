@@ -1,16 +1,17 @@
-module.exports = function (push) {
+module.exports = function (push, length) {
   var abort_cb, ended, buffer = [], _cb
-
+  length = length || 0
   var adapter = {
     paused: false,
     write: function (data) {
-      console.log('write', data)
       if(_cb) {
         var cb = _cb; _cb = null; cb(null, data)
-        if(!_cb) this.paused = true
       }
-      else
+      else {
         buffer.push(data)
+        if(buffer.length > length)
+          this.paused = true
+      }
     },
     end: function (err) {
       ended = err || true
@@ -34,7 +35,7 @@ module.exports = function (push) {
     //else read the buffer
     else if(buffer.length) {
       cb(null, buffer.shift())
-      if(!buffer.length && adapter.paused) {
+      if(buffer.length <= length/2 && adapter.paused) {
         adapter.paused = false
         push.resume()
       }
@@ -43,9 +44,4 @@ module.exports = function (push) {
       cb(true)
   }
 }
-
-
-
-
-
 
