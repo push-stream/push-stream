@@ -12,7 +12,7 @@ ValueStream.prototype.resume = function () {
   while(!this.sink.paused && !(this.ended = this._i >= this._values.length))
     this.sink.write(this._values[this._i++])
 
-  if(this.ended && !this.sink.paused && !this.sink.ended)
+  if(this.ended && !this.sink.ended)
     this.sink.end()
 }
 
