@@ -15,8 +15,8 @@ module.exports = function pipe (sink) {
   while(sink.source) sink = sink.source
   this.sink = sink
   sink.source = this
-  if(!sink.paused)
-    this.resume()
+  if(!sink.paused) this.resume()
   return _sink
 }
+
 
