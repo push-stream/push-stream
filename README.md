@@ -98,7 +98,7 @@ require writing duplex streams (you are doing protocol design if you are writing
 
 ## how data flows through a push stream pipe
 
-in node.js streams, there is a complicated "pipe" method
+In node.js streams, there is a complicated "pipe" method
 that defines how data flows between the streams. In `push-stream`
 the `pipe` method just connects the streams together, and
 instead of emitting events, the streams just call `write` and `end`
