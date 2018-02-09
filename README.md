@@ -225,9 +225,14 @@ function Map(fn) {
 ```
 
 
+## acknowledgements
+
+Thanks to [@ahdinosaur](https://github.com/ahdinosaur)
+for giving me the push-stream npm repo!
+His push-stream module (essentially a simple observable)
+is still available at push-stream@2
+
 ## License
 
 MIT
-
-
 
