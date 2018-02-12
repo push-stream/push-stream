@@ -14,14 +14,25 @@ but without several of the unrealized-at-the-time blunders of classic streams.
   the only property that changes while streaming is the `paused` boolean. No closures are necessary (which are related to memory leaks and not optimized by js engines)
   possibly a stream has a buffer (array) but otherwise no memory should be allocated on most simple streams.
 
-for additional context learn about the [history of node streams](http://dominictarr.com/post/145135293917/history-of-streams)
+push-streams also incorporates the lessons learned over several
+years working with [pull-streams](https://github.com/pull-stream/pull-stream).
+For additional context learn about the [history of node streams](http://dominictarr.com/post/145135293917/history-of-streams)
 and the [simplicity of pull-streams](http://dominictarr.com/post/149248845122/pull-streams-pull-streams-are-a-very-simple)
 
 ## motivation
 
-I am writing this because I want muxrpc to have back pressure. muxrpc wraps a simple streaming model
-inside packet-stream, I'm writing the other in this module to make sure I've throught through the
-implications of this pattern. I'm not planning on rewriting everything that uses pull-streams to use this!
+I wrote this because I wanted muxrpc to have back pressure.
+muxrpc@<=6 wrapped a simple streaming model called "packet-stream",
+which internally used a stream model called "weird streams" (yes,
+that is a sign I didn't really know what to do there) but it was
+much easier to write a multiplexer with a push model (I tried
+writing a pull based muxer and got stuck in many deadlocks)
+
+[push-mux](https://github.com/push-stream/push-mux) was relatively
+straightforward once I figured out what the push-stream api looked like.
+
+I'm not planning on rewriting everything that uses pull-streams
+to use this! So I also made [push-stream-to-pull-stream](https://github.com/push-stream/push-stream-to-pull-stream)
 
 
 ## interfaces
@@ -235,4 +246,5 @@ is still available at push-stream@2
 ## License
 
 MIT
+
 
