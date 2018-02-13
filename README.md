@@ -210,7 +210,7 @@ function Map(fn) {
   return {
     paused: true,
     write: function (data) {
-      this.sink.write(data)
+      this.sink.write(fn(data))
       this.paused = this.sink.paused
     },
     end: function (err) {
