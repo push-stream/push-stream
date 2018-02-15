@@ -129,10 +129,8 @@ to the previous stream. The words `Source` and `Sink` are also
 used to refer to the first and last streams in a pipeline.
 The `pipe` method just sets up these references, and the `resume`
 method starts the data flowing. The data should flow until
-the sink stream is not paused, as indicated by it setting the
-`pause` property to true.
-
-[pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L1-L21)
+the sink stream is paused, as indicated by it setting the
+`paused` property to true.
 
 ``` js
 //a stream that reads an array
@@ -167,14 +165,14 @@ function Values (ary) {
 }
 ```
 
+(See a [pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L1-L21).)
+
 ### sink: write a stream to console
 
 A sink stream has `write` and `end` methods and a `paused` property.
-in pull-streams, the sink is responsible for calling the source
+In [pull-stream](https://github.com/pull-stream/pull-stream)s, the sink is responsible for calling the source
 but in push-streams it's the reverse - so the push-stream sink
 doesn't need very much at all.
-
-[pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L23-L44)
 
 ``` js
 return Log (name) {
@@ -191,6 +189,8 @@ return Log (name) {
 }
 ```
 
+(See a [pull-stream version](https://github.com/dominictarr/pull-stream-examples/blob/master/pull.js#L23-L44).)
+
 ### through: map a stream by a function
 
 the through stream is more complicated in push-streams because
@@ -200,10 +200,10 @@ have it's own internal buffer. It just writes to the sink
 immediately. This may mean writing when the sink is paused in
 some situations, if this is a problem drop in a buffering stream
 
-note, push-stream throughs must start out with `paused=true`,
-sinks start out `paused=false` if a through is piped to a destination
-that is unpaused, it should resume, which will propagate the resume
-signal back up the pipeline and data will start flowing.
+Note: push-stream throughs must start out with `paused=true`,
+sinks start out `paused=false`. If a through stream is piped to a
+destination that is unpaused, it should resume, which will propagate
+the resume signal back up the pipeline and data will start flowing.
 
 ``` js
 function Map(fn) {
