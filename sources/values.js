@@ -9,7 +9,7 @@ function ValueStream (values) {
 }
 
 ValueStream.prototype.resume = function () {
-  while(!this.sink.paused && !(this.ended = this._i >= this._values.length))
+  while(!this.sink.paused && !(this.ended || this.ended = this._i >= this._values.length))
     this.sink.write(this._values[this._i++])
 
   if(this.ended && !this.sink.ended)
@@ -20,6 +20,6 @@ ValueStream.prototype.abort = function (err) {
   this.sink.end(this.ended = err || true)
 }
 
-ValueStream.prototype.pipe = require('./pipe')
+ValueStream.prototype.pipe = require('../pipe')
 
 

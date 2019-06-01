@@ -42,6 +42,7 @@ to use this! So I also made [push-stream-to-pull-stream](https://github.com/push
 ### sink.write(data)
 
 write one chunk of data to a stream.
+this **must not** be called if `sink.paused == true`.
 
 ### sink.end(err)
 
@@ -52,10 +53,15 @@ stop immediately.
 when sink.end is called with an error, it does not need to respect
 `pause` because the stream is discarded at that point.
 
+if it's an ordinary end, then the caller should wait
+until the stream is unpaused.
+
 ### sink.paused
 
 boolean of the current pause state. when writing to a stream,
 check the value of `paused` both _before_ and _after_.
+If the sink is paused, a transform stream will usually
+also pause.
 
 ### Source (aka readable)
 
@@ -72,7 +78,8 @@ If a sink sets `paused = true` then the source should stop writing.
 when the sink decides it is realy for data again, it must call
 the source - via the `resume` method. If there is data available
 the source should write it to the sink. If the source is a transform
-stream (i.e. has it's own source) then it should call `source.source.resume()`
+stream (i.e. has it's own source) then it would call
+resume on that source (pass the resume signal along)
 
 ## combinations
 
