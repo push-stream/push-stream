@@ -13,9 +13,16 @@ AsyncStream.prototype.write = function (data) {
   this.paused = true
   this._inflight ++
   this._fn(data, function (err, _data) {
-    this._inflight--
+    self._inflight--
     if(err && err !== true) return self.sink.end(err)
-    else self.sink.write(_data)
+    else if(self.ended) {
+      self.sink.write(_data)
+      self.sink.end()
+      return
+    }
+    else
+      self.sink.write(_data)
+
 
     if(self.paused && !self.sink.paused) {
       self.paused = false
@@ -28,18 +35,13 @@ AsyncStream.prototype.pipe = require('./pipe')
 
 AsyncStream.prototype.resume = function () {
   this.paused = false
-  if(this.ended && !this.inflight) this.sink.end(this.ended === true ? null : this.ended)
+  if(this.ended && !this._inflight)
+    this.sink.end(this.ended === true ? null : this.ended)
   else if (this.source) this.source.resume()
 }
 
 AsyncStream.prototype.end = function (err) {
+  if(this.ended) throw new Error('called end twice')
   this.ended = err || true
-  if(!this.inflight) this.sink.end(this.ended)
+  if(!this._inflight) this.sink.end(this.ended)
 }
-
-
-
-
-
-
-
