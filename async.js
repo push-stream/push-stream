@@ -6,6 +6,7 @@ function AsyncStream (fn) {
   this.paused = true
   this._inflight = 0
   this.source = this.sink = null
+  this.ended = false
 }
 
 AsyncStream.prototype.write = function (data) {
@@ -23,7 +24,6 @@ AsyncStream.prototype.write = function (data) {
     else
       self.sink.write(_data)
 
-
     if(self.paused && !self.sink.paused) {
       self.paused = false
       self.resume()
@@ -34,10 +34,12 @@ AsyncStream.prototype.write = function (data) {
 AsyncStream.prototype.pipe = require('./pipe')
 
 AsyncStream.prototype.resume = function () {
-  this.paused = false
-  if(this.ended && !this._inflight)
-    this.sink.end(this.ended === true ? null : this.ended)
-  else if (this.source) this.source.resume()
+  if(!this._inflight) {
+    this.paused = false
+    if(this.ended)
+      this.sink.end(this.ended === true ? null : this.ended)
+    else if (this.source) this.source.resume()
+  }
 }
 
 AsyncStream.prototype.end = function (err) {
