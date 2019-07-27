@@ -32,10 +32,8 @@ FlattenStream.prototype.resume = function (data) {
   else {
     while(!this.sink.paused && this.queue.length)
       this.sink.write(this.queue.shift())
-    if(!this.queue.length) {
-      else {
+    if(this.queue.length) {
         this.resume()
-      }
     } else
       //stay paused if we didn't write everything
       this.paused = true

@@ -9,7 +9,21 @@ function ValueStream (values) {
 }
 
 ValueStream.prototype.resume = function () {
-  while(!this.sink.paused && !(this.ended || this.ended = this._i >= this._values.length))
+  const shouldWrite = () => {
+    if (this.sink.paused) {
+      return false
+    }
+
+    if (this.ended) {
+      return false
+    } else {
+      const pastEnd = this._i >= this._values.length
+      this.ended = pastEnd
+      return !!pastEnd
+    }
+  }
+
+  while(shouldWrite())
     this.sink.write(this._values[this._i++])
 
   if(this.ended && !this.sink.ended)
