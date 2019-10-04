@@ -1,19 +1,14 @@
 'use strict'
 
-module.exports = function Count (max) {
-  var i = 0
+module.exports =
+function Empty (err) {
   return {
     resume: function () {
-      while(!this.sink.paused && !this.sink.ended)
-        if(i < max) this.sink.write(i++)
-        else return this.sink.end()
+      this.sink.end(err)
+    },
+    pipe: function (dest) {
+      this.sink = dest
+      if(!dest.paused) dest.end(err)
     }
   }
 }
-
-
-
-
-
-
-
