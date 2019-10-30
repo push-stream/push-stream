@@ -5,7 +5,7 @@ function ThroughStream() {
   this.source = this.sink = null
 }
 
-ThroughStream.prototoype.resume = function () {
+ThroughStream.prototype.resume = function () {
   if(!this.sink.paused) this.source.resume()
 }
 
@@ -27,5 +27,3 @@ ThroughStream.prototype.write = function (data) {
 ThroughStream.prototype.pipe = require('../pipe')
 
 module.exports = ThroughStream
-
-
