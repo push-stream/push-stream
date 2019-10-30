@@ -13,4 +13,4 @@ MapStream.prototype.write = function (data) {
   this.paused = this.sink.paused
 }
 
-
+module.exports = MapStream
