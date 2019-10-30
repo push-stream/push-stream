@@ -6,9 +6,6 @@ function Empty (err) {
     resume: function () {
       this.sink.end(err)
     },
-    pipe: function (dest) {
-      this.sink = dest
-      if(!dest.paused) dest.end(err)
-    }
+    pipe: require('../pipe')
   }
 }
