@@ -1,7 +1,7 @@
 
 
-var ValuesStream = require('../values')
-var CollectStream = require('../collect')
+var ValuesStream = require('../sources/values')
+var CollectStream = require('../sinks/collect')
 var AsyncStream = require('../async')
 
 //new ValuesStream([1,2,3]).pipe(new CollectStream(function (err, ary) {
