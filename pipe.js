@@ -11,6 +11,7 @@ also, duplex streams (which, like in pull streams, are a pair {source, sink} str
 */
 
 module.exports = function pipe (sink) {
+  if(!sink) throw new Error('sink must be provided')
   var _sink = sink
   while(sink.source) sink = sink.source
   this.sink = sink
@@ -18,5 +19,3 @@ module.exports = function pipe (sink) {
   if(!sink.paused) this.resume()
   return _sink
 }
-
-
