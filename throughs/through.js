@@ -6,7 +6,7 @@ function ThroughStream() {
 }
 
 ThroughStream.prototype.resume = function () {
-  if(!this.sink.paused) this.source.resume()
+  if(this.source && this.sink && !(this.paused = this.sink.paused)) this.source.resume()
 }
 
 ThroughStream.prototype.end = function (err) {
