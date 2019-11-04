@@ -1,7 +1,10 @@
 
-module.exports = ValueStream
+module.exports = function (values) {
+  return new ValueStream(values)
+}
 
 function ValueStream (values) {
+//  if(!(this instanceof ValueStream)) return new ValueStream(values)
   this._i = 0
   this._values = values
   this.paused = true

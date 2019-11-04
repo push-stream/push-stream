@@ -31,7 +31,7 @@ AsyncStream.prototype.write = function (data) {
   })
 }
 
-AsyncStream.prototype.pipe = require('./pipe')
+AsyncStream.prototype.pipe = require('../pipe')
 
 AsyncStream.prototype.resume = function () {
   if(!this._inflight) {
