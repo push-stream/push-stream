@@ -2,6 +2,7 @@
 var ThroughStream = require('./through')
 
 function FilterStream(fn) {
+  if(!(this instanceof FilterStream)) return new FilterStream(fn)
   ThroughStream.call(this)
   this.fn = fn
 }
@@ -13,4 +14,4 @@ FilterStream.prototype.write = function (data) {
   this.paused = this.sink.paused
 }
 
-
+module.exports = FilterStream
