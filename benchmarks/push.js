@@ -1,9 +1,9 @@
 const bench = require('fastbench')
 //const pull = require('../')
 
-var Values = require('../values')
-var Async = require('../async')
-var Collect = require('../collect')
+var Values = require('../sources/values')
+var Async = require('../throughs/async-map')
+var Collect = require('../sinks/collect')
 
 var a = []
 const values = [
@@ -22,7 +22,7 @@ const run = bench([
         if (err) return console.error(err)
         setImmediate(done)
       }))
-  },
+  }/*,
   function compose (done) {
     new Values(values)
       .pipe(
@@ -45,19 +45,10 @@ const run = bench([
         if (err) return console.error(err)
         setImmediate(done)
       }))
-  },
+  },*/
 ], N=100000)
 
 var heap = process.memoryUsage().heapUsed
 run(function () {
   console.log((process.memoryUsage().heapUsed - heap)/N)
 })
-
-
-
-
-
-
-
-
-
