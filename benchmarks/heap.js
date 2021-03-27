@@ -10,8 +10,8 @@ function heap (name, Stream) {
   a = null
 }
 
-heap('Values', require('../values'))
-heap('Map', require('../async'))
-heap('Collect', require('../collect'))
+heap('Values', require('../sources/values'))
+heap('Map', require('../throughs/async'))
+heap('Collect', require('../sinks/collect'))
 
 
