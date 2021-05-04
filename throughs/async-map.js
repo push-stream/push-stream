@@ -22,8 +22,7 @@ AsyncMapStream.prototype.write = function (data) {
       else if(self.paused) self.resume()
     }
   })
-  if(this.async) this.paused = true
-  else           this.paused = this.sink.paused
+  this.paused = this.async || this.sink.paused
 }
 
 AsyncMapStream.prototype.end = function (err) {
