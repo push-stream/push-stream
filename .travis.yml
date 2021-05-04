@@ -1,4 +1,10 @@
 language: node_js
 node_js:
-  - 0.6
-  - 0.8
+  - node
+  - lts/*
+matrix:
+  - env: NPM_SCRIPT="test"
+  - env: NPM_SCRIPT="benchmark:heap"
+  - env: NPM_SCRIPT="benchmark:push"
+script:
+  - npm run $NPM_SCRIPT
