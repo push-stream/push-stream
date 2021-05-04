@@ -1,7 +1,7 @@
 {
   "name": "push-stream",
   "description": "simple push-based streams",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "homepage": "https://github.com/push-stream/push-stream",
   "repository": {
     "type": "git",
