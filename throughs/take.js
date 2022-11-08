@@ -1,37 +1,39 @@
-module.exports = function (fn, opts) {
-  return new TakeStream(fn, opts)
-}
+const ThroughStream = require('./through').ThroughStream
 
-var ThroughStream = require('./through')
+class TakeStream extends ThroughStream {
+  constructor(test, opts) {
+    super()
+    this.fn = test
+    this._includeLast = opts && opts.last
 
-function TakeStream(test, opts) {
-  this.fn = test
-  this._includeLast = opts && opts.last
-
-  if ('number' === typeof test) {
-    var n = test
-    this._includeLast = true
-    this.fn = function () {
-      return --n
+    if (typeof test === 'number') {
+      let n = test
+      this._includeLast = true
+      this.fn = () => {
+        return --n
+      }
     }
+
+    this.paused = true
+    this.ended = false
+    this.source = this.sink = null
   }
 
-  this.paused = true
-  this.ended = false
-  this.source = this.sink = null
+  write(data) {
+    const test = this.fn(data)
+    if (test) {
+      this.sink.write(data)
+      this.paused = this.sink.paused
+    } else if (this._includeLast) {
+      // abort immediately, so we don't stall waiting
+      // for the next message just to end
+      this._includeLast = false
+      this.sink.write(data)
+      this.source.abort()
+    } else this.source.abort()
+  }
 }
 
-TakeStream.prototype = ThroughStream()
-
-TakeStream.prototype.write = function (data) {
-  var test = this.fn(data)
-  if (test) {
-    this.sink.write(data)
-    this.paused = this.sink.paused
-  } else if (this._includeLast) {
-    //abort immediately, so we don't stall waiting for the next message just to end
-    this._includeLast = false
-    this.sink.write(data)
-    this.source.abort()
-  } else this.source.abort()
+module.exports = function take(fn, opts) {
+  return new TakeStream(fn, opts)
 }

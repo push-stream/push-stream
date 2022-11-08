@@ -1,39 +1,44 @@
-module.exports = function (op, done) {
-  return new ThroughStream(op, done)
-}
+const Pipeable = require('../pipeable')
 
 function noop() {}
 
-function ThroughStream(op, done) {
-  this._op = op || noop
-  this._done = done || noop
-  this.paused = true
-  this.ended = false
-  this.source = this.sink = null
+class ThroughStream extends Pipeable{
+  constructor(op, done) {
+    super()
+    this._op = op || noop
+    this._done = done || noop
+    this.paused = true
+    this.ended = false
+    this.source = this.sink = null
+  }
+
+  resume() {
+    if (this.source && this.sink && !(this.paused = this.sink.paused))
+      this.source.resume()
+  }
+
+  end(err) {
+    this.ended = err || true
+    this._done(err === true ? null : err)
+    return this.sink.end(err)
+  }
+
+  abort(err) {
+    //should this check if the sink has already ended?
+    this.ended = err
+    return this.source.abort(err)
+  }
+
+  write(data) {
+    this._op(data)
+    this.sink.write(data)
+  }
 }
 
-ThroughStream.prototype.resume = function () {
-  if (this.source && this.sink && !(this.paused = this.sink.paused))
-    this.source.resume()
+function through(op, done) {
+  return new ThroughStream(op, done)
 }
 
-ThroughStream.prototype.end = function (err) {
-  this.ended = err || true
-  this._done(err === true ? null : err)
-  return this.sink.end(err)
-}
+through.ThroughStream = ThroughStream
 
-ThroughStream.prototype.abort = function (err) {
-  //should this check if the sink has already ended?
-  this.ended = err
-  return this.source.abort(err)
-}
-
-ThroughStream.prototype.write = function (data) {
-  this._op(data)
-  this.sink.write(data)
-}
-
-ThroughStream.prototype.pipe = require('../pipe')
-
-//module.exports = ThroughStream
+module.exports = through

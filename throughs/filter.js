@@ -1,16 +1,17 @@
-var ThroughStream = require('./through')
+const ThroughStream = require('./through').ThroughStream
 
-function FilterStream(fn) {
-  if (!(this instanceof FilterStream)) return new FilterStream(fn)
-  ThroughStream.call(this)
-  this.fn = fn
+class FilterStream extends ThroughStream {
+  constructor(fn) {
+    super()
+    this.fn = fn
+  }
+
+  write(data) {
+    if (this.fn(data)) this.sink.write(data)
+    this.paused = this.sink.paused
+  }
 }
 
-FilterStream.prototype = new ThroughStream()
-
-FilterStream.prototype.write = function (data) {
-  if (this.fn(data)) this.sink.write(data)
-  this.paused = this.sink.paused
+module.exports = function filter(fn) {
+  return new FilterStream(fn)
 }
-
-module.exports = FilterStream
