@@ -27,12 +27,21 @@ test('reduce becomes drain', function (t) {
   pull(
     pull.values([1,2,3]),
     pull.reduce(
-      function (a, b) {return a + b}, 
+      function (a, b) {return a + b},
       0,
       function (err, acc) {
         t.equal(acc, 6)
         t.end()
       }
     )
+  )
+})
+
+test('drain accepts null 1st arg', function (t) {
+  pull(
+    pull.values([1,2,3]),
+    pull.drain(null, function (err) {
+      t.end()
+    })
   )
 })
