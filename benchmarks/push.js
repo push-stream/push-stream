@@ -9,20 +9,25 @@ var a = []
 const values = [
   JSON.stringify({ hello: 'world' }),
   JSON.stringify({ foo: 'bar' }),
-  JSON.stringify({ bin: 'baz' })
+  JSON.stringify({ bin: 'baz' }),
 ]
 
-const run = bench([
-  function pull3 (done) {
-    new Values(values)
-      .pipe(new Async(function (val, done) {
-        done(null, val)
-      }))
-      .pipe(new Collect(function (err, array) {
-        if (err) return console.error(err)
-        setImmediate(done)
-      }))
-  }/*,
+const run = bench(
+  [
+    function pull3(done) {
+      new Values(values)
+        .pipe(
+          new Async(function (val, done) {
+            done(null, val)
+          })
+        )
+        .pipe(
+          new Collect(function (err, array) {
+            if (err) return console.error(err)
+            setImmediate(done)
+          })
+        )
+    } /*,
   function compose (done) {
     new Values(values)
       .pipe(
@@ -45,10 +50,12 @@ const run = bench([
         if (err) return console.error(err)
         setImmediate(done)
       }))
-  },*/
-], N=100000)
+  },*/,
+  ],
+  (N = 100000)
+)
 
 var heap = process.memoryUsage().heapUsed
 run(function () {
-  console.log((process.memoryUsage().heapUsed - heap)/N)
+  console.log((process.memoryUsage().heapUsed - heap) / N)
 })
