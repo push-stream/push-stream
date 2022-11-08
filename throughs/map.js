@@ -1,16 +1,17 @@
-var ThroughStream = require('./through')
+const ThroughStream = require('./through').ThroughStream
 
-function MapStream(fn) {
-  if (!(this instanceof MapStream)) return new MapStream(fn)
-  ThroughStream.call(this)
-  this.fn = fn
+class MapStream extends ThroughStream {
+  constructor(fn) {
+    super()
+    this.fn = fn
+  }
+
+  write(data) {
+    this.sink.write(this.fn(data))
+    this.paused = this.sink.paused
+  }
 }
 
-MapStream.prototype = new ThroughStream()
-
-MapStream.prototype.write = function (data) {
-  this.sink.write(this.fn(data))
-  this.paused = this.sink.paused
+module.exports = function map(fn) {
+  return new MapStream(fn)
 }
-
-module.exports = MapStream

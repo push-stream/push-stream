@@ -1,10 +1,15 @@
-'use strict'
+const Pipeable = require('../pipeable')
 
-module.exports = function Empty(err) {
-  return {
-    resume: function () {
-      this.sink.end(err)
-    },
-    pipe: require('../pipe'),
+class EmptyStream extends Pipeable {
+  constructor() {
+    super()
   }
+
+  resume() {
+    this.sink.end()
+  }
+}
+
+module.exports = function empty() {
+  return new EmptyStream()
 }
