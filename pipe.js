@@ -1,4 +1,3 @@
-
 /*
 A push stream pipeline is a doublely linked list.
 data (write/end) travels one way, and signals (pause/resume/abort) travels the other way.
@@ -10,12 +9,12 @@ also, duplex streams (which, like in pull streams, are a pair {source, sink} str
 
 */
 
-module.exports = function pipe (sink) {
-  if(!sink) throw new Error('sink must be provided')
+module.exports = function pipe(sink) {
+  if (!sink) throw new Error('sink must be provided')
   var _sink = sink
-  while(sink.source) sink = sink.source
+  while (sink.source) sink = sink.source
   this.sink = sink
   sink.source = this
-  if(!sink.paused) this.resume()
+  if (!sink.paused) this.resume()
   return _sink
 }

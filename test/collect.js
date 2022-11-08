@@ -1,5 +1,3 @@
-
-
 var ValuesStream = require('../sources/values')
 var CollectStream = require('../sinks/collect')
 var AsyncStream = require('../throughs/async')

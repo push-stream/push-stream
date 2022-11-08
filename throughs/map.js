@@ -1,4 +1,3 @@
-
 var ThroughStream = require('./through')
 
 function MapStream(fn) {

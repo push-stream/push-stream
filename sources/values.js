@@ -1,10 +1,9 @@
-
 module.exports = function (values) {
   return new ValueStream(values)
 }
 
-function ValueStream (values) {
-//  if(!(this instanceof ValueStream)) return new ValueStream(values)
+function ValueStream(values) {
+  //  if(!(this instanceof ValueStream)) return new ValueStream(values)
   this._i = 0
   this._values = values
   this.paused = true
@@ -12,15 +11,17 @@ function ValueStream (values) {
 }
 
 ValueStream.prototype.resume = function () {
-  while(!this.sink.paused && !(this.ended || (this.ended = this._i >= this._values.length)))
+  while (
+    !this.sink.paused &&
+    !(this.ended || (this.ended = this._i >= this._values.length))
+  )
     this.sink.write(this._values[this._i++])
 
-  if(this.ended && !this.sink.ended)
-    this.sink.end()
+  if (this.ended && !this.sink.ended) this.sink.end()
 }
 
 ValueStream.prototype.abort = function (err) {
-  this.sink.end(this.ended = err || true)
+  this.sink.end((this.ended = err || true))
 }
 
 ValueStream.prototype.pipe = require('../pipe')

@@ -2,7 +2,7 @@ module.exports = function (op, done) {
   return new ThroughStream(op, done)
 }
 
-function noop () {}
+function noop() {}
 
 function ThroughStream(op, done) {
   this._op = op || noop
@@ -13,7 +13,8 @@ function ThroughStream(op, done) {
 }
 
 ThroughStream.prototype.resume = function () {
-  if(this.source && this.sink && !(this.paused = this.sink.paused)) this.source.resume()
+  if (this.source && this.sink && !(this.paused = this.sink.paused))
+    this.source.resume()
 }
 
 ThroughStream.prototype.end = function (err) {

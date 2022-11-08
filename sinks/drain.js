@@ -2,7 +2,7 @@ module.exports = function (each, done) {
   return new DrainStream(each, done)
 }
 
-function DrainStream (each, done) {
+function DrainStream(each, done) {
   this.paused = false
   this._each = each
   this._done = done
@@ -11,7 +11,7 @@ function DrainStream (each, done) {
 DrainStream.prototype.write = function (data) {
   if (!this._each) return
   if (this._each(data) === false) {
-    this.abort();
+    this.abort()
   }
 }
 
