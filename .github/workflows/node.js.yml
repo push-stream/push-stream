@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.x, 18.x, 19.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -24,3 +24,33 @@ jobs:
       - run: npm install
       - name: npm test
         run: npm test
+
+  benchmark:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - run: npm install
+      - name: Benchmark
+        run: npm run benchmark | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" > /tmp/pull-stream-bench.txt
+      - id: get-comment-body
+        name: Gather results
+        run: |
+          body=$(cat /tmp/pull-stream-bench.txt)
+          body="${body//'%'/'%25'}"
+          body="${body//$'\n'/'%0A'}"
+          body="${body//$'\r'/'%0D'}"
+          echo ::set-output name=body::$body
+      - name: Publish comment
+        uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            ```
+            ${{ steps.get-comment-body.outputs.body }}
+            ```
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

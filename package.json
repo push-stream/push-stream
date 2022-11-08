@@ -15,16 +15,15 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "fastbench": "^1.0.1",
-    "pull-stream": "^3.6.1",
+    "micro-bmark": "^0.2.0",
     "prettier": "^2.7.1",
+    "pull-stream": "^3.6.14",
     "tap-arc": "~0.3.5",
     "tape": "^5.5.3"
   },
   "scripts": {
     "format-code": "prettier --write \"*.js\" \"benchmarks/*.js\" \"sinks/*.js\" \"sources/*.js\" \"test/*.js\" \"throughs/*.js\"",
-    "benchmark:heap": "node ./benchmarks/heap.js",
-    "benchmark:push": "node ./benchmarks/push.js",
+    "benchmark": "node ./benchmarks/cpu.js && node --expose-gc ./benchmarks/mem-pull.js && node --expose-gc ./benchmarks/mem-push.js",
     "test": "tape test/*.js | tap-arc --bail"
   },
   "author": "'Dominic Tarr' <dominic.tarr@gmail.com> (dominictarr.com)",
