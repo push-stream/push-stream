@@ -1,6 +1,7 @@
 var ThroughStream = require('./through')
 
 function MapStream(fn) {
+  if (!(this instanceof MapStream)) return new MapStream(fn)
   ThroughStream.call(this)
   this.fn = fn
 }
