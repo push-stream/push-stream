@@ -3,7 +3,7 @@ const pull = require('pull-stream')
 const push = require('../')
 
 bench.run(async () => {
-  const ARRAY = Array(100_000).map((_, i) => i)
+  const ARRAY = Array(200_000).map((_, i) => i)
 
   await bench.mark(
     'pull.values',

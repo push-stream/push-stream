@@ -2,7 +2,7 @@ const bench = require('micro-bmark')
 const push = require('../')
 
 bench.run(async () => {
-  const ARRAY = Array(100_000).map((_, i) => i)
+  const ARRAY = Array(200_000).map((_, i) => i)
 
   gc()
   bench.logMem()
